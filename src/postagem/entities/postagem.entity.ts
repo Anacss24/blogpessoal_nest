@@ -1,6 +1,7 @@
 import { Transform, TransformFnParams } from "class-transformer";
 import { IsNotEmpty } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Tema } from "../../tema/entities/tema.entity";
 
 // Criar tabela no banco de dados
 @Entity({name: "tb_postagens"})
@@ -26,4 +27,13 @@ export class Postagem {
     // Preencimento automático da data e hora
     @UpdateDateColumn()
     data: Date;
+
+    // Relacionamento de Muitos para Um, Muitas postagens, possuem um tema
+    @ManyToOne(() => Tema, (tema) => tema.postagem, {
+         // Configura a exclusão em cascata
+         //Especifica que, quando um registro de Tema for deletado, todas as postagens relacionadas a esse Tema também serão deletadas automaticamente.
+        onDelete: 'CASCADE'
+    })
+    // // Propriedade para a relação com a entidade Tema
+    tema: Tema;
 }
