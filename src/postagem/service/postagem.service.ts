@@ -20,14 +20,19 @@ export class PostagemService {
         return await this.postagemRepository.find({
             // Exibir o tema na listagem de postagem
             relations: {
-                tema: true
+                tema: true,
+                usuario: true
             }
         });
     }
 
     async findById(id: number): Promise<Postagem> {
         let buscaPostagem = await this.postagemRepository.findOne({
-            where: { id }
+            where: { id },
+            relations: {
+                tema: true,
+                usuario: true
+            }
         })
         if (!buscaPostagem)
             throw new HttpException('A Postagem não foi encontrada!', HttpStatus.NOT_FOUND)
@@ -41,7 +46,8 @@ export class PostagemService {
                 titulo: ILike(`%${titulo}%`)
             },
             relations: {
-                tema: true
+                tema: true,
+                usuario: true
             }
         })
     }

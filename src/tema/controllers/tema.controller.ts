@@ -1,13 +1,17 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
 import { TemaService } from "../service/tema.service";
 import { Tema } from "../entities/tema.entity";
+import { JwtAuthGuard } from "../../auth/guard/jwt-auth.guard";
 
+// Para definir um controlador
+@UseGuards(JwtAuthGuard)
 @Controller("temas")
 export class TemaController {
     
     // O construtor injeta o serviço 'TemaService' que será utilizado pelos métodos do controlador.
     constructor(private readonly temaService: TemaService){}
-
+   
+   // Para lidar com a solicitação GET dentro do controlador REST
    @Get()
    @HttpCode(HttpStatus.OK)
    // Retorna todas as postagens
@@ -19,6 +23,7 @@ export class TemaController {
    @Get("/:id")
    @HttpCode(HttpStatus.OK)
    // 'ParseIntPipe' garantir que o 'id' seja um número inteiro
+   // @Param para definir variáveis ​​de URL para endpoints 
    findById(@Param('id', ParseIntPipe)id: number): Promise<Tema>{
     // Retorna a postagem específica pelo 'id'
     return this.temaService.findById(id);
@@ -36,6 +41,7 @@ export class TemaController {
    @Post()
    // Ao criar um tema com sucesso, retornar o status 201
    @HttpCode(HttpStatus.CREATED)
+   // @Body para enviar informações no corpo da solicitação
    create(@Body() tema: Tema): Promise<Tema>{
     // Retorna a postagem criada
     return this.temaService.create(tema)
