@@ -34,7 +34,7 @@ export class Postagem {
     @UpdateDateColumn()
     data: Date;
 
-    @ApiProperty() 
+    @ApiProperty({type: () => Tema})
     // Relacionamento de Muitos para Um, Muitas postagens, possuem um tema
     @ManyToOne(() => Tema, (tema) => tema.postagem, {
          // Configura a exclusão em cascata
@@ -44,6 +44,8 @@ export class Postagem {
     // // Propriedade para a relação com a entidade Tema
     tema: Tema;
 
+
+    @ApiProperty({type: () => Usuario})
     @ManyToOne(() => Usuario, (usuario) => usuario.postagem, {
         // Configura a exclusão em cascata
         //Especifica que, quando um registro de Tema for deletado, todas as postagens relacionadas a esse Tema também serão deletadas automaticamente.

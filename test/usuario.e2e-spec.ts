@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,6 +26,7 @@ describe('Teste dos Módulos Usuarios e Auth (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
@@ -43,7 +44,8 @@ describe('Teste dos Módulos Usuarios e Auth (e2e)', () => {
       foto: '-',
     })
     .expect(201)
-
+    
+    console.log('Resposta do cadastro:', resposta.body);
     usuarioId = resposta.body.id;
 
   })
@@ -57,12 +59,10 @@ describe('Teste dos Módulos Usuarios e Auth (e2e)', () => {
       senha: 'rootroot',
       foto: '-',
     })
-    .expect(400)
-
-    usuarioId = resposta.body.id;
-   
     
+    .expect(400)
   })
+
   it("03- Deve Autenticar o Usuário (Login)", async () => {
     const resposta = await request(app.getHttpServer())
     .post("/usuarios/logar")
@@ -73,6 +73,7 @@ describe('Teste dos Módulos Usuarios e Auth (e2e)', () => {
 
     .expect(200)
 
+    console.log('Resposta do login:', resposta.body);
     token = resposta.body.token;
   })
 
@@ -93,7 +94,7 @@ describe('Teste dos Módulos Usuarios e Auth (e2e)', () => {
       nome: 'Root Atualizado',
       usuario: 'root@root.com',
       senha: 'rootroot',
-      foto: '-',
+      foto: 'foto.jpg',
     })
     .expect(200)
     .then( resposta => {
